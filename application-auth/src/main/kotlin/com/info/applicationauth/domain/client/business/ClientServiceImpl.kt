@@ -13,9 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import java.util.function.Consumer
 
 
 @Service
@@ -37,12 +39,14 @@ class ClientServiceImpl(
 
             jpaRegisteredClientRepository.save(
                 RegisteredClient.withId(UUID.randomUUID().toString())
-                    .clientName(request.clientEmail)
+                    .clientName("${request.clientEmail},${request.serviceName},${request.serviceDomainName}")
                     .clientId(clientId)
                     .clientSecret(passwordEncoder.encode(clientSecret))
                     .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                    .redirectUri(request.redirectUri)
+                    .redirectUris{ uris: MutableSet<String?> ->
+                        uris.addAll(request.redirectUris)
+                    }
                     .scope("test-scope")
                     .build()
             )
@@ -52,7 +56,7 @@ class ClientServiceImpl(
                 request.clientEmail,
                 clientId,
                 clientSecret,
-                request.redirectUri
+                request.redirectUris
             )
         } else throw CommonException(errorCode = ErrorCode.NOT_MATCH_ERROR)
     }

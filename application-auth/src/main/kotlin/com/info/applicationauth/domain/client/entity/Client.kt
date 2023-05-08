@@ -10,9 +10,11 @@ class Client(
     id: String,
     clientId: String,
     clientIdIssuedAt: Instant?,
-    clientSecret: String?,
+    clientSecret: String,
     clientSecretExpiresAt: Instant?,
-    clientName: String,
+    clientEmail: String,
+    clientService: String,
+    clientServiceDomainName: String,
     clientAuthenticationMethods: String,
     authorizationGrantTypes: String,
     redirectUris: String,
@@ -25,32 +27,43 @@ class Client(
     @Id
     val id: String = id
 
+    @Column(name = "client_id", nullable = false)
     val clientId: String = clientId
 
+    @Column(name = "client_id_issued_at")
     val clientIdIssuedAt: Instant? = clientIdIssuedAt
 
-    val clientSecret: String? = clientSecret
+    @Column(name = "client_secret", nullable = false)
+    val clientSecret: String = clientSecret
 
+    @Column(name = "client_secret_expires_at")
     val clientSecretExpiresAt: Instant? = clientSecretExpiresAt
 
-    val clientName: String = clientName
+    @Column(name = "client_name", nullable = false)
+    val clientEmail: String = clientEmail
 
-    @Column(length = 1000)
+    @Column(name = "client_service", nullable = false)
+    val clientService: String = clientService
+
+    @Column(name = "client_service_domain_name", nullable = false)
+    val clientServiceDomainName: String = clientServiceDomainName
+
+    @Column(name = "client_authentication_method_list", length = 1000, nullable = false)
     val clientAuthenticationMethods: String = clientAuthenticationMethods
 
-    @Column(length = 1000)
+    @Column(name = "authorization_grant_type_list", length = 1000, nullable = false)
     val authorizationGrantTypes: String = authorizationGrantTypes
 
-    @Column(length = 1000)
+    @Column(name = "redirect_uri_list", length = 1000, nullable = false)
     val redirectUris: String = redirectUris
 
-    @Column(length = 1000)
+    @Column(name = "scope_list", length = 1000, nullable = false)
     val scopes: String = scopes
 
-    @Column(length = 2000)
+    @Column(name = "client_setting_list", length = 2000, nullable = false)
     val clientSettings: String = clientSettings
 
-    @Column(length = 2000)
+    @Column(name = "token_setting_list", length = 2000, nullable = false)
     val tokenSettings: String = tokenSettings
 
 }

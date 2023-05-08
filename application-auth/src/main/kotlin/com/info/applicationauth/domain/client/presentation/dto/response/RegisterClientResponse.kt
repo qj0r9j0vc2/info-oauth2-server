@@ -4,6 +4,6 @@ data class RegisterClientResponse (
     val clientName: String,
     val clientId: String,
     val clientSecret: String,
-    val redirectUri: String
+    val redirectUris: Set<String>
 
 )

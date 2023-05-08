@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.StringUtils
 import java.time.Duration
+import java.util.UUID
 import java.util.function.Consumer
 
 
@@ -63,7 +64,12 @@ class JpaRegisteredClientRepository(
             .clientIdIssuedAt(client.clientIdIssuedAt)
             .clientSecret(client.clientSecret)
             .clientSecretExpiresAt(client.clientSecretExpiresAt)
-            .clientName(client.clientName)
+            .tokenSettings(
+                TokenSettings.builder()
+                    .accessTokenTimeToLive(Duration.ofHours(1))
+                    .refreshTokenTimeToLive(Duration.ofHours(12))
+                .build())
+            .clientName("${client.clientEmail},${client.clientService},${client.clientServiceDomainName}")
             .clientAuthenticationMethods { authenticationMethods: MutableSet<ClientAuthenticationMethod?> ->
                 clientAuthenticationMethods.forEach(
                     Consumer { authenticationMethod: String? ->
@@ -120,9 +126,11 @@ class JpaRegisteredClientRepository(
             registeredClient.id,
             registeredClient.clientId,
             registeredClient.clientIdIssuedAt,
-            registeredClient.clientSecret,
+            registeredClient.clientSecret?:UUID.randomUUID().toString(),
             registeredClient.clientSecretExpiresAt,
-            registeredClient.clientName,
+            StringUtils.commaDelimitedListToStringArray(registeredClient.clientName)[0],
+            StringUtils.commaDelimitedListToStringArray(registeredClient.clientName)[1]?:StringUtils.commaDelimitedListToStringArray(registeredClient.clientName)[0],
+            StringUtils.commaDelimitedListToStringArray(registeredClient.clientName)[2]?:StringUtils.commaDelimitedListToStringArray(registeredClient.clientName)[0],
             StringUtils.collectionToCommaDelimitedString(clientAuthenticationMethods),
             StringUtils.collectionToCommaDelimitedString(authorizationGrantTypes),
             StringUtils.collectionToCommaDelimitedString(registeredClient.redirectUris),
