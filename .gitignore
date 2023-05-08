@@ -1,0 +1,8 @@
+
+application-auth/build/
+
+application-resource/build/
+
+.gradle/
+
+.idea/

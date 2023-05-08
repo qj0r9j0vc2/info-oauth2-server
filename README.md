@@ -3,7 +3,14 @@
 ---
 
 > info-oauth2 provides user data from INFO service that is DSM job site as OAuth2 service
->
+
+| authorizationCodeTimeToLive | 5minutes |  |
+| --- | --- | --- |
+| accessTokenTimeToLive | 1hours |  |
+| accessTokenFormat | self-contained | Self-contained tokens use a protected, time-limited data structure that contains token metadata and claims of the user and/or client. JSON Web Token (JWT) is a widely used format |
+| reuseRefreshTokens | true |  |
+| refreshTokenTimeToLive | 12hours |  |
+| idTokenSignatureAlgorithm | RSASSA-PKCS1-v1_5 using SHA-256 |  |
 
 # Concepts
 
