@@ -37,6 +37,7 @@
   |        |                                           |               |
   |        |<-(H)----------- Access Token -------------|               |
   +--------+           & Optional Refresh Token        +---------------+
+reference - [https://datatracker.ietf.org/doc/html/rfc6749](https://datatracker.ietf.org/doc/html/rfc6749)
 ```
 
 There is no refreshToken in this project. So the steps are only up to step F, and going to step F resets to step A.
