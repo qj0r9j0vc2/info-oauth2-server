@@ -3,6 +3,7 @@ package com.info.applicationauth.domain.client.business
 import com.info.applicationauth.domain.client.entity.EmailCheckCode
 import com.info.applicationauth.domain.client.presentation.dto.request.RegisterClientRequest
 import com.info.applicationauth.domain.client.presentation.dto.response.RegisterClientResponse
+import com.info.applicationauth.domain.client.repository.ClientRepository
 import com.info.applicationauth.domain.client.repository.EmailCheckCodeRepository
 import com.info.applicationauth.domain.client.repository.JpaRegisteredClientRepository
 import com.info.applicationauth.infra.smtp.EmailUtil
@@ -14,8 +15,10 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Duration
 import java.util.*
 import java.util.function.Consumer
 
@@ -33,28 +36,39 @@ class ClientServiceImpl(
 
     override fun register(request: RegisterClientRequest, code: String): RegisterClientResponse {
         if (emailCheckCodeRepository.findById(request.clientEmail).orElse(null)?.data == code) {
-
-            val clientId = UUID.randomUUID().toString()
             val clientSecret = UUID.randomUUID().toString()
 
             jpaRegisteredClientRepository.save(
                 RegisteredClient.withId(UUID.randomUUID().toString())
-                    .clientName("${request.clientEmail},${request.serviceName},${request.serviceDomainName}")
-                    .clientId(clientId)
+                    .clientName("${request.clientEmail},${request.serviceDomainName}")
+                    .clientId(request.serviceName)
                     .clientSecret(passwordEncoder.encode(clientSecret))
                     .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                    .redirectUris{ uris: MutableSet<String?> ->
+                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                    .tokenSettings(
+                        TokenSettings.builder()
+                            .accessTokenTimeToLive(Duration.ofHours(1))
+                            .refreshTokenTimeToLive(Duration.ofHours(12))
+                            .build()
+                    )
+                    .redirectUris { uris: MutableSet<String?> ->
                         uris.addAll(request.redirectUris)
                     }
-                    .scope("test-scope")
+                    .clientSettings(
+                        ClientSettings.builder()
+                            .requireProofKey(request.requireProofKey)
+                            .requireAuthorizationConsent(true)
+                            .build()
+                    )
+                    .scope("profile")
                     .build()
             )
-            log.info("clientName: ${request.clientEmail} clientId: $clientId, clientSecret: $clientSecret")
+            log.info("clientName: ${request.clientEmail} clientId: ${request.serviceName}, clientSecret: $clientSecret")
 
             return RegisterClientResponse(
                 request.clientEmail,
-                clientId,
+                request.serviceName,
                 clientSecret,
                 request.redirectUris
             )

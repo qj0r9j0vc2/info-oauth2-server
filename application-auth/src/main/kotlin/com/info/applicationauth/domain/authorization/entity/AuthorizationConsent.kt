@@ -28,23 +28,15 @@ class AuthorizationConsent(
 
 
     class AuthorizationConsentId(
-        registeredClientId: String,
-        principalName: String
+        val registeredClientId: String? = null,
+        val principalName: String? = null
     ): java.io.Serializable {
-
-        val registeredClientId: String = registeredClientId
-
-        val principalName: String = principalName
-
         override fun equals(other: Any?): Boolean {
             if (this == other) return true
             if (other == null || javaClass != other.javaClass) return false
             val that = other as AuthorizationConsentId
             return registeredClientId == that.registeredClientId && principalName == that.principalName
         }
-
     }
-
-
 
 }

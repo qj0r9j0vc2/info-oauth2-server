@@ -4,9 +4,13 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.info.applicationauth.domain.client.entity.Client
+import com.info.applicationcore.exception.CommonException
+import com.info.applicationcore.exception.ErrorCode
+import org.springframework.http.HttpStatus
+import org.springframework.security.core.AuthenticationException
 import org.springframework.security.jackson2.SecurityJackson2Modules
-import org.springframework.security.oauth2.core.AuthorizationGrantType
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod
+import org.springframework.security.oauth2.core.*
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationException
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module
@@ -15,8 +19,9 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.StringUtils
+import org.springframework.web.server.ResponseStatusException
 import java.time.Duration
-import java.util.UUID
+import java.util.*
 import java.util.function.Consumer
 
 
@@ -41,8 +46,8 @@ class JpaRegisteredClientRepository(
 
     override fun findByClientId(clientId: String): RegisteredClient? {
         return clientRepository.findByClientId(clientId).map {
-                toObject(it)
-            }.orElse(null)
+            toObject(it)
+        }.orElse(null)
     }
 
 
@@ -64,12 +69,7 @@ class JpaRegisteredClientRepository(
             .clientIdIssuedAt(client.clientIdIssuedAt)
             .clientSecret(client.clientSecret)
             .clientSecretExpiresAt(client.clientSecretExpiresAt)
-            .tokenSettings(
-                TokenSettings.builder()
-                    .accessTokenTimeToLive(Duration.ofHours(1))
-                    .refreshTokenTimeToLive(Duration.ofHours(12))
-                .build())
-            .clientName("${client.clientEmail},${client.clientService},${client.clientServiceDomainName}")
+            .clientName("${client.clientEmail},${client.clientServiceDomainName}")
             .clientAuthenticationMethods { authenticationMethods: MutableSet<ClientAuthenticationMethod?> ->
                 clientAuthenticationMethods.forEach(
                     Consumer { authenticationMethod: String? ->
@@ -130,7 +130,6 @@ class JpaRegisteredClientRepository(
             registeredClient.clientSecretExpiresAt,
             StringUtils.commaDelimitedListToStringArray(registeredClient.clientName)[0],
             StringUtils.commaDelimitedListToStringArray(registeredClient.clientName)[1]?:StringUtils.commaDelimitedListToStringArray(registeredClient.clientName)[0],
-            StringUtils.commaDelimitedListToStringArray(registeredClient.clientName)[2]?:StringUtils.commaDelimitedListToStringArray(registeredClient.clientName)[0],
             StringUtils.collectionToCommaDelimitedString(clientAuthenticationMethods),
             StringUtils.collectionToCommaDelimitedString(authorizationGrantTypes),
             StringUtils.collectionToCommaDelimitedString(registeredClient.redirectUris),

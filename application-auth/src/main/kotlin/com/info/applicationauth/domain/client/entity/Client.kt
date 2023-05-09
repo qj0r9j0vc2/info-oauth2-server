@@ -13,7 +13,6 @@ class Client(
     clientSecret: String,
     clientSecretExpiresAt: Instant?,
     clientEmail: String,
-    clientService: String,
     clientServiceDomainName: String,
     clientAuthenticationMethods: String,
     authorizationGrantTypes: String,
@@ -25,7 +24,7 @@ class Client(
 ) {
 
     @Id
-    val id: String = id
+    val id: String = clientId
 
     @Column(name = "client_id", nullable = false)
     val clientId: String = clientId
@@ -41,9 +40,6 @@ class Client(
 
     @Column(name = "client_name", nullable = false)
     val clientEmail: String = clientEmail
-
-    @Column(name = "client_service", nullable = false)
-    val clientService: String = clientService
 
     @Column(name = "client_service_domain_name", nullable = false)
     val clientServiceDomainName: String = clientServiceDomainName

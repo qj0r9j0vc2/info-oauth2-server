@@ -68,15 +68,13 @@ subprojects {
 
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
-        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         developmentOnly("org.springframework.boot:spring-boot-devtools")
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
-        runtimeOnly("mysql:mysql-connector-java:8.0.32")
+        implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     }
 
@@ -106,6 +104,7 @@ project(":application-resource") {
 
     dependencies {
         implementation(project(":application-core"))
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     }
 }
 
@@ -117,5 +116,6 @@ project(":application-auth") {
     dependencies {
         implementation(project(":application-core"))
         implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0")
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     }
 }

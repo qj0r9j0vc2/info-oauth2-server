@@ -6,3 +6,11 @@ application-resource/build/
 .gradle/
 
 .idea/
+
+application-core/build/
+
+build/
+
+application-auth/src/main/resources/
+
+application-resource/src/main/resources/

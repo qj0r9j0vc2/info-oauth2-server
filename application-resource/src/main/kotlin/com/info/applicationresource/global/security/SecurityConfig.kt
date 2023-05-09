@@ -15,9 +15,8 @@ class SecurityConfig {
         return http
             .formLogin().disable()
             .authorizeHttpRequests{ a ->
-//                a.requestMatchers("/user/**").hasAnyAuthority("SCOPE_STUDENT","SCOPE_STUDENT")
-                a.requestMatchers("/user/**").hasAnyAuthority("test-scope")
-                a.anyRequest().hasAuthority("SCOPE_TEACHER")
+                a.requestMatchers("/user/**").hasAnyAuthority("SCOPE_profile")
+                a.anyRequest().hasAnyAuthority("SCOPE_TEACHER", "SCOPE_test-scope")
                 .and()
                 .oauth2ResourceServer()
                 .jwt()
