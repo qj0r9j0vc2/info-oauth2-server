@@ -1,4 +1,5 @@
 # **info-oauth2-server**
+[자세한 설명(한글)](./README_ko.md)
 
 ---
 
