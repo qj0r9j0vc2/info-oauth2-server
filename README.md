@@ -1,6 +1,6 @@
 # **info-oauth2-server**
 
-url: https://oauth2.info-dsm.info/ 
+oauth2-url: https://oauth2.info-dsm.info/ 
 <br>
 <br>
 [자세한 설명(한글)](./README_ko.md)
