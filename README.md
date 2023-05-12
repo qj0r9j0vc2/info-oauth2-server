@@ -5,7 +5,7 @@ url: https://oauth2.info-dsm.info/
 <br>
 [자세한 설명(한글)](./README_ko.md)
 <br>
-https://dsm-info.notion.site/299d6088aa804f2995a13b6af5a9b05a
+[연동 방법](https://dsm-info.notion.site/299d6088aa804f2995a13b6af5a9b05a)
 
 ---
 
