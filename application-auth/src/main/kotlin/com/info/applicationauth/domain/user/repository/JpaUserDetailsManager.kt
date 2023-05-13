@@ -16,7 +16,7 @@ class JpaUserDetailsManager(
 
     override fun loadUserByUsername(email: String?): UserDetails? {
         email?.let {
-            val user = userRepository.findByEmail(it).orElse(null)
+            val user = userRepository.findByEmail(it).orElse(null) ?: return null
             val authorities = HashSet<GrantedAuthority>()
             user.authorities.map {
                 authorities.add(SimpleGrantedAuthority(it.authority))

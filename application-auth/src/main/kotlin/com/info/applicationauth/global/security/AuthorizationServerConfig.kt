@@ -21,12 +21,8 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidator
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtClaimValidator
 import org.springframework.security.oauth2.jwt.JwtDecoder
-import org.springframework.security.oauth2.server.authorization.authentication.JwtClientAssertionAuthenticationProvider
-import org.springframework.security.oauth2.server.authorization.authentication.JwtClientAssertionDecoderFactory
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2ClientAuthenticationConfigurer
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
@@ -40,6 +36,7 @@ import java.util.function.Consumer
 
 @Configuration
 class AuthorizationServerConfig(
+    private val authenticationFailureHandler: AuthenticationFailureHandler
 ){
     @Bean
     fun passwordEncoder(): PasswordEncoder {
@@ -52,11 +49,19 @@ class AuthorizationServerConfig(
     fun asSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         return http
+            .formLogin()
+                .loginPage("/info-login")
+                .loginProcessingUrl("/info-login-proc")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .failureHandler(AuthenticationFailureHandler())
+                .permitAll()
+            .and()
             .getConfigurer(OAuth2AuthorizationServerConfigurer::class.java).oidc(withDefaults())
             .and()
             .exceptionHandling { e: ExceptionHandlingConfigurer<HttpSecurity?> ->
                 e
-                    .authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login"))
+                    .authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/info-login"))
             }
             .oauth2ResourceServer { obj: OAuth2ResourceServerConfigurer<HttpSecurity?> -> obj.jwt() }
             .build()

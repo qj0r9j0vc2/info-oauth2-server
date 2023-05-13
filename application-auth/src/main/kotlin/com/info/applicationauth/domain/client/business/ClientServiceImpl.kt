@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.util.StringUtils
 import java.time.Duration
 import java.util.*
 import java.util.function.Consumer
@@ -35,6 +36,9 @@ class ClientServiceImpl(
     private val log = LoggerFactory.getLogger(this::class.java)
 
     override fun register(request: RegisterClientRequest, code: String): RegisterClientResponse {
+        jpaRegisteredClientRepository.findByClientId(request.serviceName)?.let {
+            if (StringUtils.commaDelimitedListToStringArray(it.clientName)[0] != request.clientEmail) throw CommonException("동일한 serviceName의 client가 존재합니다.", errorCode = ErrorCode.ALREAD_EXISTS_ERROR)
+        }
         if (emailCheckCodeRepository.findById(request.clientEmail).orElse(null)?.data == code) {
             val clientSecret = UUID.randomUUID().toString()
 
