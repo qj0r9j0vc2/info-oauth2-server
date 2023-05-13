@@ -1,6 +1,6 @@
 # **info-oauth2-server**
-
 ---
+## 연동 방법: [OAuth2 적용 방법(필독)](https://dsm-info.notion.site/299d6088aa804f2995a13b6af5a9b05a)
 
 > info-oauth2 는 [info-dsm](https://github.com/info-dsm/INFO_v2_Backend)에서 제공하는 유저 데이터를 기반으로 OAuth2 서비스를 제공합니다.
 > 
