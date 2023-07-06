@@ -7,8 +7,8 @@ class TeacherResponse(
     email: String,
     profileUrl: String?,
 ): UserResponse(
-    name,
     email,
+    name,
     Role.TEACHER,
     profileUrl
 ) {
